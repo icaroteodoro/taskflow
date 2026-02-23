@@ -37,7 +37,9 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
     const [loading, setLoading] = useState(false);
     const isCompleted = goal.completedStepsToday >= goal.totalSteps;
 
-    const handleStep = async (delta: number) => {
+    const handleStep = async (e: React.MouseEvent, delta: number) => {
+        e.preventDefault();
+        e.stopPropagation();
         try {
             setLoading(true);
             const formattedDate = format(date, 'yyyy-MM-dd');
@@ -52,7 +54,11 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         try {
             setLoading(true);
             await api.delete(`/goals/${goal.id}`);
@@ -105,7 +111,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
                             disabled={loading}
-                            onClick={() => handleStep(-1)}
+                            onClick={(e) => handleStep(e, -1)}
                             title="Undo 1 step"
                         >
                             <Minus className="h-4 w-4" />
@@ -118,7 +124,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                             size="icon"
                             className="h-8 w-8 hover:bg-primary/90 shrink-0"
                             disabled={loading}
-                            onClick={() => handleStep(1)}
+                            onClick={(e) => handleStep(e, 1)}
                             title="Complete 1 step"
                         >
                             <Plus className="h-4 w-4" />
@@ -140,7 +146,11 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-primary shrink-0"
-                        onClick={onEdit}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onEdit();
+                        }}
                         disabled={loading}
                     >
                         <Edit2 className="h-4 w-4" />
