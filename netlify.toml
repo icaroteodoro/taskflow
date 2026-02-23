@@ -4,9 +4,6 @@
   
   # Comando para fazer o build do Next.js
   command = "npm run build"
-  
-  # Diretório que o Next.js gera após o build
-  publish = ".next"
 
 [build.environment]
   # Força o uso do Node.js versão 20 (recomendado para Next.js 15+)
