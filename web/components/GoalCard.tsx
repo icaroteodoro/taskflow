@@ -107,6 +107,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                 <div className="flex items-center gap-2 ml-4 flex-wrap justify-end sm:flex-nowrap">
                     {goal.completedStepsToday > 0 && (
                         <Button
+                            type="button"
                             variant="outline"
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
@@ -120,6 +121,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
 
                     {!isCompleted ? (
                         <Button
+                            type="button"
                             variant="default"
                             size="icon"
                             className="h-8 w-8 hover:bg-primary/90 shrink-0"
@@ -131,6 +133,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                         </Button>
                     ) : (
                         <Button
+                            type="button"
                             variant="secondary"
                             size="icon"
                             className="h-8 w-8 bg-primary/20 text-primary hover:bg-primary/30 shrink-0"
@@ -143,6 +146,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                     <div className="w-px h-6 bg-border mx-1 hidden sm:block"></div>
 
                     <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-primary shrink-0"
@@ -159,6 +163,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button
+                                type="button"
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"

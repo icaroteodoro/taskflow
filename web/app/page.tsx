@@ -34,9 +34,9 @@ export default function Dashboard() {
     }
   }, [user, authLoading, router]);
 
-  const fetchGoals = async () => {
+  const fetchGoals = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       const formattedDate = format(currentDate, 'yyyy-MM-dd');
       const response = await api.get(`/goals?date=${formattedDate}`);
       setGoals(response.data);
@@ -49,7 +49,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user) {
-      fetchGoals();
+      fetchGoals(true);
     }
   }, [user, currentDate]);
 
@@ -187,7 +187,7 @@ export default function Dashboard() {
                 key={goal.id}
                 goal={goal}
                 date={currentDate}
-                onUpdate={fetchGoals}
+                onUpdate={() => fetchGoals(false)}
                 onEdit={() => {
                   setGoalToEdit(goal);
                   setIsModalOpen(true);
@@ -201,7 +201,7 @@ export default function Dashboard() {
       <GoalFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={fetchGoals}
+        onSuccess={() => fetchGoals(false)}
         goal={goalToEdit}
       />
       <ChangePasswordModal isOpen={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} />
