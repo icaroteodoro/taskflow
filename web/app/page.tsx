@@ -135,31 +135,36 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-3xl">
         {/* Date Navigator */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={handlePreviousDay}>
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+            <Button variant="outline" size="icon" onClick={handlePreviousDay} className="shrink-0">
               <ChevronLeft className="h-4 w-4" />
             </Button>
 
-            <div className="flex flex-col items-center min-w-[140px]">
-              <h2 className="text-xl font-semibold capitalize">
-                {isToday ? 'Hoje' : format(currentDate, "d 'de' MMM, yyyy", { locale: ptBR })}
+            <div className="flex flex-col items-center flex-1 sm:flex-none sm:w-[280px] md:w-[320px] px-2 min-h-16 justify-center">
+              <h2 className="text-[1rem] sm:text-lg md:text-xl font-semibold capitalize text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis w-full">
+                {isToday
+                  ? `Hoje (${format(currentDate, "EEEE", { locale: ptBR })})`
+                  : format(currentDate, "EEEE, d 'de' MMM, yyyy", { locale: ptBR })}
               </h2>
               {!isToday && (
-                <button onClick={handleToday} className="text-xs text-primary hover:underline mt-1">
+                <button onClick={handleToday} className="text-xs text-primary hover:underline mt-1 h-4 flex items-center">
                   Ir para hoje
                 </button>
               )}
+              {isToday && (
+                <div className="h-4 mt-1"></div>
+              )}
             </div>
 
-            <Button variant="outline" size="icon" onClick={handleNextDay}>
+            <Button variant="outline" size="icon" onClick={handleNextDay} className="shrink-0">
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
 
-          <Button onClick={openCreateModal} className="gap-2">
+          <Button onClick={openCreateModal} className="w-full sm:w-auto gap-2 shrink-0">
             <Plus className="h-4 w-4" />
-            Nova Meta
+            Nova Tarefa
           </Button>
         </div>
 
@@ -172,8 +177,8 @@ export default function Dashboard() {
           </div>
         ) : goals.length === 0 ? (
           <div className="text-center py-12 bg-card rounded-lg border border-dashed">
-            <p className="text-muted-foreground mb-4">Nenhuma meta para este dia.</p>
-            <Button onClick={openCreateModal} variant="outline">Crie sua primeira meta</Button>
+            <p className="text-muted-foreground mb-4">Nenhuma tarefa para este dia.</p>
+            <Button onClick={openCreateModal} variant="outline">Crie sua primeira tarefa</Button>
           </div>
         ) : (
           <div className="space-y-4">

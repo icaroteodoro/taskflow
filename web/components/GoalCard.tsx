@@ -14,7 +14,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import { Check, Edit2, Minus, Plus, Trash2 } from 'lucide-react';
+import { Check, Edit2, Minus, Plus, Trash2, Clock } from 'lucide-react';
 import { useState } from 'react';
 import api from '@/lib/api';
 
@@ -25,6 +25,8 @@ interface GoalCardProps {
         type: 'DAILY' | 'PUNCTUAL';
         totalSteps: number;
         completedStepsToday: number;
+        time?: string;
+        daysOfWeek?: string[];
     };
     date: Date;
     onUpdate: () => void;
@@ -73,6 +75,12 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                         <span className="text-[10px] font-medium tracking-wider uppercase px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
                             {goal.type}
                         </span>
+                        {goal.time && (
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2">
+                                <Clock className="h-3 w-3" />
+                                {goal.time.substring(0, 5)}
+                            </span>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-4 text-sm mt-2">
@@ -151,9 +159,9 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
                         </AlertDialogTrigger>
                         <AlertDialogContent className="sm:max-w-[425px]">
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Excluir Meta?</AlertDialogTitle>
+                                <AlertDialogTitle>Excluir Tarefa?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    Tem certeza que deseja excluir esta meta completamente? Esta ação removerá todo o histórico de progresso e não pode ser desfeita.
+                                    Tem certeza que deseja excluir esta tarefa completamente? Esta ação removerá todo o histórico de progresso e não pode ser desfeita.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

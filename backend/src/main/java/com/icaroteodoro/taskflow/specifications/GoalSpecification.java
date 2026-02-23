@@ -13,14 +13,18 @@ public class GoalSpecification {
         return (root, query, criteriaBuilder) -> {
             var userPredicate = criteriaBuilder.equal(root.get("user").get("id"), userId);
 
-            // type == DAILY OR (type == PUNCTUAL AND targetDate == date)
+            // type == DAILY AND (daysOfWeek is empty OR date.getDayOfWeek() in daysOfWeek)
             var typeDaily = criteriaBuilder.equal(root.get("type"), GoalType.DAILY);
+            var daysOfWeekEmpty = criteriaBuilder.isEmpty(root.get("daysOfWeek"));
+            var dayOfWeekContains = criteriaBuilder.isMember(date.getDayOfWeek(), root.get("daysOfWeek"));
+            var dailyCondition = criteriaBuilder.and(typeDaily, criteriaBuilder.or(daysOfWeekEmpty, dayOfWeekContains));
+
             var typePunctual = criteriaBuilder.and(
                     criteriaBuilder.equal(root.get("type"), GoalType.PUNCTUAL),
                     criteriaBuilder.equal(root.get("targetDate"), date)
             );
             
-            var datePredicate = criteriaBuilder.or(typeDaily, typePunctual);
+            var datePredicate = criteriaBuilder.or(dailyCondition, typePunctual);
 
             return criteriaBuilder.and(userPredicate, datePredicate);
         };

@@ -3,8 +3,12 @@ package com.icaroteodoro.taskflow.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -37,6 +41,16 @@ public class Goal {
     // Only set if type == PUNCTUAL
     @Column(name = "target_date")
     private LocalDate targetDate;
+
+    @Column(name = "time")
+    private LocalTime time;
+
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "goal_days_of_week", joinColumns = @JoinColumn(name = "goal_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
+    private Set<DayOfWeek> daysOfWeek = new HashSet<>();
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

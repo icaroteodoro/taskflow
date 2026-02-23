@@ -4,7 +4,10 @@ import com.icaroteodoro.taskflow.entities.GoalType;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Set;
 
 @Data
 public class GoalUpdateRequest {
@@ -15,4 +18,8 @@ public class GoalUpdateRequest {
     private Integer totalSteps;
     
     private LocalDate targetDate;
+    
+    private LocalTime time;
+    
+    private Set<DayOfWeek> daysOfWeek;
 }

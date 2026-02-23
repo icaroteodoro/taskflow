@@ -71,7 +71,7 @@ export default function Register() {
                     </div>
                     <CardTitle className="text-2xl font-bold tracking-tight text-primary">Junte-se ao Taskflow</CardTitle>
                     <CardDescription>
-                        Crie uma conta para começar a rastrear suas metas
+                        Crie uma conta para começar a rastrear suas tarefas
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>

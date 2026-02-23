@@ -6,7 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Set;
 
 @Data
 public class GoalCreateRequest {
@@ -22,4 +25,8 @@ public class GoalCreateRequest {
 
     // Optional depending on GoalType
     private LocalDate targetDate;
+
+    private LocalTime time;
+
+    private Set<DayOfWeek> daysOfWeek;
 }

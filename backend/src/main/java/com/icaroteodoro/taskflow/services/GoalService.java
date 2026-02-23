@@ -82,6 +82,13 @@ public class GoalService {
     public List<GoalDTO> getGoalsByDate(UUID userId, LocalDate date) {
         List<Goal> goals = goalRepository.findAll(GoalSpecification.byUserAndDate(userId, date));
         
+        goals.sort((g1, g2) -> {
+            if (g1.getTime() == null && g2.getTime() == null) return 0;
+            if (g1.getTime() == null) return 1;
+            if (g2.getTime() == null) return -1;
+            return g1.getTime().compareTo(g2.getTime());
+        });
+        
         return goals.stream().map(goal -> {
             GoalDTO dto = goalMapper.toDto(goal);
             
