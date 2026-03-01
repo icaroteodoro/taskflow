@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  password           String
+  name               String
+  enabled            Boolean             @default(false)
+  createdAt          DateTime            @default(now()) @map("created_at")
+  goals              Goal[]
+  verificationToken  VerificationToken?
+  refreshToken       RefreshToken?
+  passwordResetToken PasswordResetToken?
+
+  @@map("users")
+}
+
+model Goal {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  title      String
+  type       String // 'DAILY' | 'PUNCTUAL'
+  totalSteps Int       @map("total_steps")
+  targetDate DateTime? @map("target_date")
+  time       DateTime? @map("time")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  daysOfWeek GoalDayOfWeek[]
+  logs       GoalLog[]
+
+  @@map("goals")
+}
+
+model GoalDayOfWeek {
+  id        String @id @default(uuid())
+  goalId    String @map("goal_id")
+  dayOfWeek String @map("day_of_week") // 'MONDAY', 'TUESDAY', etc.
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@map("goal_days_of_week")
+}
+
+model GoalLog {
+  id             String   @id @default(uuid())
+  goalId         String   @map("goal_id")
+  date           DateTime
+  completedSteps Int      @default(0) @map("completed_steps")
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@map("goal_logs")
+}
+
+model VerificationToken {
+  id         String   @id @default(uuid())
+  token      String
+  userId     String   @unique @map("user_id")
+  expiryDate DateTime @map("expiry_date")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_tokens")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  userId     String   @unique @map("user_id")
+  token      String   @unique
+  expiryDate DateTime @map("expiry_date")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid())
+  token      String
+  userId     String   @unique @map("user_id")
+  expiryDate DateTime @map("expiry_date")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}

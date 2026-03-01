@@ -145,7 +145,7 @@ export default function Dashboard() {
               <h2 className="text-[1rem] sm:text-lg md:text-xl font-semibold capitalize text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis w-full">
                 {isToday
                   ? `Hoje (${format(currentDate, "EEEE", { locale: ptBR })})`
-                  : format(currentDate, "EEEE, d 'de' MMM, yyyy", { locale: ptBR })}
+                  : format(currentDate, "EEEE, d ' de' MMM, yyyy", { locale: ptBR })}
               </h2>
               {!isToday && (
                 <button onClick={handleToday} className="text-xs text-primary hover:underline mt-1 h-4 flex items-center">
