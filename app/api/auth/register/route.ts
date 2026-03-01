@@ -34,32 +34,32 @@ export async function POST(req: Request) {
             data: {
                 name,
                 email,
+                enabled: true,
                 password: hashedPassword,
-                enabled: false, // Require email verification
             },
         });
 
-        const token = crypto.randomUUID();
-        const expiryDate = dayjs().add(24, "hour").toDate();
+        // const token = crypto.randomUUID();
+        // const expiryDate = dayjs().add(24, "hour").toDate();
 
-        await prisma.verificationToken.create({
-            data: {
-                token,
-                userId: user.id,
-                expiryDate,
-            },
-        });
+        // // await prisma.verificationToken.create({
+        // //     data: {
+        // //         token,
+        // //         userId: user.id,
+        // //         expiryDate,
+        // //     },
+        // // });
 
-        const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-            }/verify-email?token=${token}`;
+        // const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        //     }/verify-email?token=${token}`;
 
-        const html = `Obrigado por se registrar no Taskflow. Por favor, clique no link abaixo para verificar sua conta:<br/><br/><a href="${verificationUrl}">${verificationUrl}</a><br/><br/>Este link expirará em 24 horas.`;
+        // const html = `Obrigado por se registrar no Taskflow. Por favor, clique no link abaixo para verificar sua conta:<br/><br/><a href="${verificationUrl}">${verificationUrl}</a><br/><br/>Este link expirará em 24 horas.`;
 
-        await sendEmail({
-            to: user.email,
-            subject: "Bem-vindo ao Taskflow! Por favor, verifique seu e-mail.",
-            html,
-        });
+        // await sendEmail({
+        //     to: user.email,
+        //     subject: "Bem-vindo ao Taskflow! Por favor, verifique seu e-mail.",
+        //     html,
+        // });
 
         return NextResponse.json(
             { message: "Usuário registrado com sucesso! Verifique seu e-mail." },
