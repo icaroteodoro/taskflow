@@ -1,0 +1,14 @@
+[00:00:01.539] Server  LOG     ✓ Ready in 1190ms
+[00:00:08.532] Server  LOG     ○ Compiling / ...
+[00:00:10.044] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:12.298] Server  ERROR   RefreshToken Error: PrismaClientKnownRequestError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].refreshToken.findUnique()` invocation in
+/Users/icaroteodoro/Documents/projects/taskflow/.next/dev/server/chunks/[root-of-the-server]__3f5fc7f3._.js:457:177
+
+  454         status: 400
+  455     });
+  456 }
+→ 457 const refreshTokenEntity = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].refreshToken.findUnique(
+The table `main.refresh_tokens` does not exist in the current database.
+[00:00:12.383] Browser ERROR   Failed to fetch goals {"code":"ERR_BAD_RESPONSE","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"data":"{\"refreshToken\":\"ac747adc-1c75-4d18-8ef4-41ab1a16e7fc\"}","env":{},"headers":{"Accept":"application/json, text/plain, */*","Content-Type":"application/json"},"maxBodyLength":-1,"maxContentLength":-1,"method":"post","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"legacyInterceptorReqResOrdering":true,"silentJSONParsing":true},"url":"/api/auth/refreshtoken","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 500","name":"AxiosError","stack":"AxiosError: Request failed with status code 500\n    at settle (http://localhost:3000/_next/static/chunks/node_modules_492a0951._.js:3692:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/node_modules_492a0951._.js:4210:174)\n    at Axios.request (http://localhost:3000/_next/static/chunks/node_modules_492a0951._.js:5016:49)\n    at async http://localhost:3000/_next/static/chunks/_8a80306f._.js:38:25\n    at async Axios.request (http://localhost:3000/_next/static/chunks/node_modules_492a0951._.js:5012:20)\n    at async fetchGoals (http://localhost:3000/_next/static/chunks/_21a90720._.js:2353:30)\n    at Axios.request (http://localhost:3000/_next/static/chunks/node_modules_492a0951._.js:5016:49)\n    at async fetchGoals (http://localhost:3000/_next/static/chunks/_21a90720._.js:2353:30)","status":500}
+[00:00:13.445] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

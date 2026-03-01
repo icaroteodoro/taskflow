@@ -1,0 +1,6 @@
+{
+  "/api/auth/refreshtoken/route": "app/api/auth/refreshtoken/route.js",
+  "/api/goals/route": "app/api/goals/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js"
+}
