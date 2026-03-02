@@ -36,7 +36,7 @@ export async function POST(
         }
 
         const body = await req.json();
-        const { completedSteps } = body;
+        const { completedSteps, stepDelta } = body;
 
         const { goalId } = await params;
         const date = dayjs(dateQuery).startOf("day").toDate();
@@ -63,16 +63,24 @@ export async function POST(
         let log;
 
         if (existingLog) {
+            const newSteps = stepDelta !== undefined
+                ? Math.max(0, existingLog.completedSteps + stepDelta)
+                : completedSteps;
+
             log = await prisma.goalLog.update({
                 where: { id: existingLog.id },
-                data: { completedSteps },
+                data: { completedSteps: newSteps },
             });
         } else {
+            const newSteps = stepDelta !== undefined
+                ? Math.max(0, stepDelta)
+                : (completedSteps || 0);
+
             log = await prisma.goalLog.create({
                 data: {
                     goalId: existingGoal.id,
                     date,
-                    completedSteps,
+                    completedSteps: newSteps,
                 },
             });
         }

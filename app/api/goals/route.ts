@@ -130,7 +130,7 @@ export async function GET(req: Request) {
                 targetDate: g.targetDate ? dayjs(g.targetDate).format("YYYY-MM-DD") : null,
                 time: g.time ? dayjs(g.time).format("HH:mm") : null,
                 daysOfWeek: g.daysOfWeek.map((d: { dayOfWeek: string }) => d.dayOfWeek),
-                completedSteps: logForDate ? logForDate.completedSteps : 0,
+                completedStepsToday: logForDate ? logForDate.completedSteps : 0,
             };
         });
 
