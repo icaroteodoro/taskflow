@@ -13,14 +13,15 @@ interface GoalFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
-    goal?: any; // If editing, passing the goal object
+    goal?: any;
+    defaultDate?: Date;
 }
 
-export default function GoalFormModal({ isOpen, onClose, onSuccess, goal }: GoalFormModalProps) {
+export default function GoalFormModal({ isOpen, onClose, onSuccess, goal, defaultDate }: GoalFormModalProps) {
     const [title, setTitle] = useState('');
     const [type, setType] = useState<'DAILY' | 'PUNCTUAL'>('DAILY');
     const [totalSteps, setTotalSteps] = useState(1);
-    const [targetDate, setTargetDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+    const [targetDate, setTargetDate] = useState(format(defaultDate || new Date(), 'yyyy-MM-dd'));
     const [time, setTime] = useState('');
     const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
@@ -46,16 +47,20 @@ export default function GoalFormModal({ isOpen, onClose, onSuccess, goal }: Goal
                 setTime(goal.time || '');
                 setDaysOfWeek(goal.daysOfWeek || []);
             } else {
+                const initialDate = defaultDate || new Date();
+                const dayName = format(initialDate, 'EEEE').toUpperCase();
+                
                 setTitle('');
                 setType('DAILY');
                 setTotalSteps(1);
-                setTargetDate(format(new Date(), 'yyyy-MM-dd'));
+                setTargetDate(format(initialDate, 'yyyy-MM-dd'));
                 setTime('');
-                setDaysOfWeek([]);
+                setDaysOfWeek([dayName]);
             }
             setError('');
         }
-    }, [isOpen, goal]);
+    }, [isOpen, goal, defaultDate]);
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

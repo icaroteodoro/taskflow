@@ -12,21 +12,17 @@ import GoalCard from '@/components/GoalCard';
 import api from '@/lib/api';
 import GoalFormModal from '@/components/GoalFormModal';
 import { ChangePasswordModal } from '@/components/ChangePasswordModal';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Switch } from '@/components/ui/switch';
-import { User as UserIcon } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import Header from '@/components/Header';
+
 export default function Dashboard() {
-  const { user, loading: authLoading, logout } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [goals, setGoals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [goalToEdit, setGoalToEdit] = useState<any | null>(null);
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -62,6 +58,14 @@ export default function Dashboard() {
     setIsModalOpen(true);
   };
 
+  const handleOptimisticUpdate = (goalId: string, newSteps: number) => {
+    setGoals(currentGoals => 
+      currentGoals.map(g => 
+        g.id === goalId ? { ...g, completedStepsToday: newSteps } : g
+      )
+    );
+  };
+
   if (authLoading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -74,63 +78,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Taskflow Logo" width={32} height={32} className="block dark:hidden" priority />
-            <Image src="/logo-white.svg" alt="Taskflow Logo" width={32} height={32} className="hidden dark:block" priority />
-            <h1 className="text-xl font-bold dark:text-white text-primary hidden sm:block">Taskflow</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-auto rounded-full p-1 pr-3 bg-secondary/80 hover:bg-secondary border border-border/50">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 text-white font-bold shadow-sm">
-                      {user?.name?.charAt(0).toUpperCase() || 'U'}
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-foreground/70" />
-                  </div>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setIsPasswordModalOpen(true)} className="cursor-pointer flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  <span>Alterar Senha</span>
-                </DropdownMenuItem>
+      <Header />
 
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setTheme(theme === "dark" ? "light" : "dark");
-                  }}
-                  className="cursor-pointer flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                    <span>Tema</span>
-                  </div>
-                  <Switch checked={theme === 'dark'} />
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive flex items-center gap-2">
-                  <LogOut className="h-4 w-4" />
-                  <span>Sair</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-3xl">
@@ -144,8 +93,8 @@ export default function Dashboard() {
             <div className="flex flex-col items-center flex-1 sm:flex-none sm:w-[280px] md:w-[320px] px-2 min-h-16 justify-center">
               <h2 className="text-[1rem] sm:text-lg md:text-xl font-semibold capitalize text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis w-full">
                 {isToday
-                  ? `Hoje (${format(currentDate, "EEEE", { locale: ptBR })})`
-                  : format(currentDate, "EEEE, d ' de' MMM, yyyy", { locale: ptBR })}
+                   ? `Hoje (${format(currentDate, "EEEE", { locale: ptBR })})`
+                   : format(currentDate, "EEEE, d ' de' MMM, yyyy", { locale: ptBR })}
               </h2>
               {!isToday && (
                 <button onClick={handleToday} className="text-xs text-primary hover:underline mt-1 h-4 flex items-center">
@@ -188,6 +137,7 @@ export default function Dashboard() {
                 goal={goal}
                 date={currentDate}
                 onUpdate={() => fetchGoals(false)}
+                onOptimisticUpdate={handleOptimisticUpdate}
                 onEdit={() => {
                   setGoalToEdit(goal);
                   setIsModalOpen(true);
@@ -198,13 +148,14 @@ export default function Dashboard() {
         )}
       </main>
 
+
       <GoalFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => fetchGoals(false)}
         goal={goalToEdit}
+        defaultDate={currentDate}
       />
-      <ChangePasswordModal isOpen={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} />
     </div>
   );
 }

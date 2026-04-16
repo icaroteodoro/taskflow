@@ -31,15 +31,26 @@ interface GoalCardProps {
     date: Date;
     onUpdate: () => void;
     onEdit: () => void;
+    variant?: 'default' | 'compact';
+    onClick?: () => void;
+    onOptimisticUpdate?: (goalId: string, newSteps: number) => void;
 }
 
-export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps) {
+export default function GoalCard({ goal, date, onUpdate, onEdit, variant = 'default', onClick, onOptimisticUpdate }: GoalCardProps) {
     const [loading, setLoading] = useState(false);
     const isCompleted = goal.completedStepsToday >= goal.totalSteps;
 
     const handleStep = async (e: React.MouseEvent, delta: number) => {
         e.preventDefault();
         e.stopPropagation();
+
+        const newSteps = Math.min(goal.totalSteps, Math.max(0, goal.completedStepsToday + delta));
+        
+        // Optimistic update
+        if (onOptimisticUpdate) {
+            onOptimisticUpdate(goal.id, newSteps);
+        }
+
         try {
             setLoading(true);
             const formattedDate = format(date, 'yyyy-MM-dd');
@@ -49,10 +60,13 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
             onUpdate();
         } catch (error) {
             console.error('Failed to update goal steps', error);
+            // Revert state if error
+            onUpdate();
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleDelete = async (e?: React.MouseEvent) => {
         if (e) {
@@ -69,6 +83,46 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
             setLoading(false);
         }
     };
+
+    if (variant === 'compact') {
+        return (
+            <Card
+                className={`overflow-hidden py-2 transition-all duration-300 cursor-pointer hover:shadow-md hover:border-primary/40 active:scale-[0.98] ${isCompleted ? 'bg-primary/5 border-primary/20 opacity-80' : 'bg-card'}`}
+                onClick={onClick}
+            >
+                <div className="p-3">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className={`font-medium text-sm leading-tight ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
+                            {goal.title}
+                        </h3>
+                        {goal.time && (
+                            <span className="flex items-center gap-1 text-[10px] text-muted-foreground whitespace-nowrap">
+                                <Clock className="h-2.5 w-2.5" />
+                                {goal.time.substring(0, 5)}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-[10px]">
+                            <span className="text-muted-foreground">
+                                {goal.completedStepsToday}/{goal.totalSteps}
+                            </span>
+                            <span className={isCompleted ? 'text-primary font-bold' : 'text-muted-foreground'}>
+                                {Math.round((goal.completedStepsToday / goal.totalSteps) * 100)}%
+                            </span>
+                        </div>
+                        <div className="h-1 bg-secondary rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-primary transition-all duration-300 ease-out"
+                                style={{ width: `${Math.min(100, Math.max(0, (goal.completedStepsToday / goal.totalSteps) * 100))}%` }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </Card>
+        );
+    }
 
     return (
         <Card className={`overflow-hidden transition-all duration-300 ${isCompleted ? 'bg-primary/5 border-primary/20' : ''}`}>
@@ -195,3 +249,4 @@ export default function GoalCard({ goal, date, onUpdate, onEdit }: GoalCardProps
         </Card>
     );
 }
+

@@ -74,67 +74,91 @@ export async function GET(req: Request) {
         }
 
         const { searchParams } = new URL(req.url);
-        const dateQuery = searchParams.get("date"); // e.g. "2023-10-25"
+        const dateQuery = searchParams.get("date");
+        const startDateQuery = searchParams.get("startDate");
+        const endDateQuery = searchParams.get("endDate");
 
-        if (!dateQuery) {
+        if (!dateQuery && (!startDateQuery || !endDateQuery)) {
             return NextResponse.json(
-                { message: "Date parameter is required." },
+                { message: "Date or range (startDate and endDate) parameters are required." },
                 { status: 400 }
             );
         }
 
-        const date = dayjs(dateQuery);
-        const dayOfWeekString = date.format("dddd").toUpperCase();
-
-        // In Prisma with SQLite, finding goals for a specific date/day involves fetching
-        // the user's goals and filtering in memory, or using complex relational queries.
-        // For simplicity and matching Java logical filtering:
-
-        const goals = await prisma.goal.findMany({
-            where: {
-                userId: user.id,
-            },
+        const allGoals = await prisma.goal.findMany({
+            where: { userId: user.id },
             include: {
                 daysOfWeek: true,
                 logs: {
-                    where: {
+                    where: dateQuery ? {
                         date: {
-                            gte: date.startOf("day").toDate(),
-                            lte: date.endOf("day").toDate(),
+                            gte: dayjs(dateQuery).startOf("day").toDate(),
+                            lte: dayjs(dateQuery).endOf("day").toDate(),
+                        },
+                    } : {
+                        date: {
+                            gte: dayjs(startDateQuery).startOf("day").toDate(),
+                            lte: dayjs(endDateQuery).endOf("day").toDate(),
                         },
                     },
                 },
             },
         });
 
-        type GoalWithRelations = typeof goals[0];
+        const processGoalsForDate = (dateStr: string) => {
+            const date = dayjs(dateStr);
+            const dayOfWeekString = date.format("dddd").toUpperCase();
 
-        // Filter goals based on type
-        const filteredGoals = goals.filter((goal: GoalWithRelations) => {
-            if (goal.type === "DAILY") {
-                return goal.daysOfWeek.some((d: { dayOfWeek: string }) => d.dayOfWeek === dayOfWeekString);
-            } else if (goal.type === "PUNCTUAL") {
-                return goal.targetDate && dayjs(goal.targetDate).isSame(date, "day");
-            }
-            return false;
-        });
+            const filtered = allGoals.filter((goal) => {
+                if (goal.type === "DAILY") {
+                    return goal.daysOfWeek.some((d) => d.dayOfWeek === dayOfWeekString);
+                } else if (goal.type === "PUNCTUAL") {
+                    return goal.targetDate && dayjs(goal.targetDate).isSame(date, "day");
+                }
+                return false;
+            });
 
-        // Map to GoalDTO structure (flatten daysOfWeek and logs)
-        const dtos = filteredGoals.map((g: GoalWithRelations) => {
-            const logForDate = g.logs[0];
-            return {
-                id: g.id,
-                title: g.title,
-                type: g.type,
-                totalSteps: g.totalSteps,
-                targetDate: g.targetDate ? dayjs(g.targetDate).format("YYYY-MM-DD") : null,
-                time: g.time ? dayjs(g.time).format("HH:mm") : null,
-                daysOfWeek: g.daysOfWeek.map((d: { dayOfWeek: string }) => d.dayOfWeek),
-                completedStepsToday: logForDate ? logForDate.completedSteps : 0,
-            };
-        });
+            const dtos = filtered.map((g) => {
+                const logForDate = g.logs.find(l => dayjs(l.date).isSame(date, "day"));
+                return {
+                    id: g.id,
+                    title: g.title,
+                    type: g.type,
+                    totalSteps: g.totalSteps,
+                    targetDate: g.targetDate ? dayjs(g.targetDate).format("YYYY-MM-DD") : null,
+                    time: g.time ? dayjs(g.time).format("HH:mm") : null,
+                    daysOfWeek: g.daysOfWeek.map((d) => d.dayOfWeek),
+                    completedStepsToday: logForDate ? logForDate.completedSteps : 0,
+                };
+            });
 
-        return NextResponse.json(dtos, { status: 200 });
+            return dtos.sort((a, b) => {
+                if (a.time && b.time) return a.time.localeCompare(b.time);
+                if (a.time) return -1;
+                if (b.time) return 1;
+                return 0;
+            });
+        };
+
+
+        if (dateQuery) {
+            return NextResponse.json(processGoalsForDate(dateQuery), { status: 200 });
+        }
+
+        // Handle range
+        const start = dayjs(startDateQuery);
+        const end = dayjs(endDateQuery);
+        const result: Record<string, any[]> = {};
+        
+        let current = start;
+        while (current.isBefore(end) || current.isSame(end, "day")) {
+            const dateStr = current.format("YYYY-MM-DD");
+            result[dateStr] = processGoalsForDate(dateStr);
+            current = current.add(1, "day");
+        }
+
+        return NextResponse.json(result, { status: 200 });
+
     } catch (error) {
         console.error("Get Goals Error:", error);
         return NextResponse.json(
@@ -143,3 +167,4 @@ export async function GET(req: Request) {
         );
     }
 }
+
