@@ -1,14 +1,6 @@
-import nodemailer from "nodemailer";
+import { Resend } from 'resend';
 
-export const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST || "localhost",
-    port: Number(process.env.MAIL_PORT) || 1025,
-    auth: {
-        user: process.env.MAIL_USERNAME || "",
-        pass: process.env.MAIL_PASSWORD || "",
-    },
-    secure: false, // true for 465, false for other ports
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendEmail({
     to,
@@ -19,10 +11,19 @@ export async function sendEmail({
     subject: string;
     html: string;
 }) {
-    return transporter.sendMail({
-        from: process.env.MAIL_USERNAME || '"Taskflow" <no-reply@taskflow.com>',
-        to,
-        subject,
-        html,
-    });
+    const from = process.env.MAIL_FROM || 'Taskflow <noreply@taskflow.com.br>';
+
+    try {
+        const data = await resend.emails.send({
+            from,
+            to,
+            subject,
+            html,
+        });
+
+        return data;
+    } catch (error) {
+        console.error('Failed to send email via Resend:', error);
+        throw error;
+    }
 }
