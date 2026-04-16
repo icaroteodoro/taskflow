@@ -38,7 +38,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4 bg-background">
-            <Card className="w-full max-w-sm">
+            <Card className="w-full max-w-sm py-6">
                 <CardHeader className="space-y-1 text-center flex flex-col items-center">
                     <div className="mb-4">
                         <Image src="/logo.svg" alt="Taskflow Logo" width={80} height={80} className="block dark:hidden" priority />

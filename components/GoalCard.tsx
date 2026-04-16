@@ -45,7 +45,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit, variant = 'defa
         e.stopPropagation();
 
         const newSteps = Math.min(goal.totalSteps, Math.max(0, goal.completedStepsToday + delta));
-        
+
         // Optimistic update
         if (onOptimisticUpdate) {
             onOptimisticUpdate(goal.id, newSteps);
@@ -87,7 +87,7 @@ export default function GoalCard({ goal, date, onUpdate, onEdit, variant = 'defa
     if (variant === 'compact') {
         return (
             <Card
-                className={`overflow-hidden py-2 transition-all duration-300 cursor-pointer hover:shadow-md hover:border-primary/40 active:scale-[0.98] ${isCompleted ? 'bg-primary/5 border-primary/20 opacity-80' : 'bg-card'}`}
+                className={`overflow-hidden transition-all duration-300 cursor-pointer hover:shadow-md hover:border-primary/40 active:scale-[0.98] py-2 ${isCompleted ? 'bg-primary/5 border-primary/20 opacity-80' : 'bg-card'}`}
                 onClick={onClick}
             >
                 <div className="p-3">

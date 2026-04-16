@@ -58,7 +58,7 @@ function ResetPasswordContent() {
 
     if (status === 'success') {
         return (
-            <Card className="w-full max-w-sm text-center">
+            <Card className="w-full max-w-sm text-center py-6">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-primary">Sucesso</CardTitle>
                     <CardDescription>{message}</CardDescription>
@@ -73,7 +73,7 @@ function ResetPasswordContent() {
     }
 
     return (
-        <Card className="w-full max-w-sm">
+        <Card className="w-full max-w-sm py-6">
             <CardHeader className="space-y-1 text-center flex flex-col items-center">
                 <div className="mb-4">
                     <Image src="/logo.svg" alt="Taskflow Logo" width={80} height={80} className="block dark:hidden" priority />

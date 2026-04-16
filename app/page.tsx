@@ -59,8 +59,8 @@ export default function Dashboard() {
   };
 
   const handleOptimisticUpdate = (goalId: string, newSteps: number) => {
-    setGoals(currentGoals => 
-      currentGoals.map(g => 
+    setGoals(currentGoals =>
+      currentGoals.map(g =>
         g.id === goalId ? { ...g, completedStepsToday: newSteps } : g
       )
     );
@@ -93,8 +93,8 @@ export default function Dashboard() {
             <div className="flex flex-col items-center flex-1 sm:flex-none sm:w-[280px] md:w-[320px] px-2 min-h-16 justify-center">
               <h2 className="text-[1rem] sm:text-lg md:text-xl font-semibold capitalize text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis w-full">
                 {isToday
-                   ? `Hoje (${format(currentDate, "EEEE", { locale: ptBR })})`
-                   : format(currentDate, "EEEE, d ' de' MMM, yyyy", { locale: ptBR })}
+                  ? `Hoje (${format(currentDate, "EEEE", { locale: ptBR })})`
+                  : format(currentDate, "EEEE, d ' de' MMM, yyyy", { locale: ptBR })}
               </h2>
               {!isToday && (
                 <button onClick={handleToday} className="text-xs text-primary hover:underline mt-1 h-4 flex items-center">
