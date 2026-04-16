@@ -44,7 +44,7 @@ export async function POST(req: Request) {
             },
         });
 
-        const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://taskflowtasks.netlify.app"
             }/reset-password?token=${token}`;
 
         const html = `Você solicitou uma redefinição de senha. Por favor, clique no link abaixo para criar uma nova senha:<br/><br/><a href="${resetUrl}">${resetUrl}</a><br/><br/>Este link expirará em 1 hora. Se você não solicitou isso, por favor ignore este e-mail.`;
